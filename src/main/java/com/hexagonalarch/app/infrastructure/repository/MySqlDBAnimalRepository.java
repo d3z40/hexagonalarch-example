@@ -4,6 +4,7 @@ import com.hexagonalarch.app.domain.Animal;
 import com.hexagonalarch.app.domain.repository.AnimalRepository;
 import com.hexagonalarch.app.infrastructure.data.AnimalData;
 import org.modelmapper.ModelMapper;
+import org.modelmapper.PropertyMap;
 import org.springframework.stereotype.Component;
 
 import java.util.Optional;
@@ -33,6 +34,16 @@ public class MySqlDBAnimalRepository implements AnimalRepository {
 
     @Override
     public void save(Animal animal) {
+        PropertyMap<Animal, AnimalData> animalPropertyMap = new PropertyMap<Animal, AnimalData>() {
+            @Override
+            protected void configure() {
+                skip(destination.getId());
+            }
+        };
+
+        //modelMapper.getConfiguration().setAmbiguityIgnored(true);
+        //modelMapper.addMappings(animalPropertyMap);
+
         var animalData = modelMapper.map(animal, AnimalData.class);
         springDataAnimalRepository.save(animalData);
     }
